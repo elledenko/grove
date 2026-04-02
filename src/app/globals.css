@@ -9,3 +9,130 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Plant sway animation */
+@keyframes plant-sway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+.animate-plant-sway {
+  animation: plant-sway 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Plant bounce on XP gain */
+@keyframes plant-bounce {
+  0% { transform: scale(1) translateY(0); }
+  20% { transform: scale(1.08) translateY(-8px); }
+  40% { transform: scale(0.97) translateY(0); }
+  60% { transform: scale(1.03) translateY(-3px); }
+  80% { transform: scale(0.99) translateY(0); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.animate-plant-bounce {
+  animation: plant-bounce 0.6s ease-out;
+}
+
+/* Sparkle effect */
+@keyframes sparkle {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+
+.animate-sparkle {
+  animation: sparkle 0.8s ease-out forwards;
+}
+
+/* XP toast float */
+@keyframes xp-float {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 1; transform: translateY(-20px) scale(1.1); }
+  40% { opacity: 1; transform: translateY(-40px) scale(1); }
+  100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
+}
+
+.animate-xp-float {
+  animation: xp-float 1.5s ease-out forwards;
+}
+
+/* Confetti fall */
+@keyframes confetti-fall {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  100% {
+    opacity: 0;
+    transform: translate(var(--confetti-x), var(--confetti-y)) rotate(var(--confetti-r));
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall 1.8s ease-out forwards;
+}
+
+/* Goal complete pop */
+@keyframes goal-complete {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.02); box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.15); }
+  60% { transform: scale(0.99); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+
+.animate-goal-complete {
+  animation: goal-complete 0.5s ease-out;
+}
+
+/* Check mark pop */
+@keyframes check-pop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.animate-check-pop {
+  animation: check-pop 0.3s ease-out;
+}
+
+/* Mood emoji bounce */
+@keyframes mood-bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  50% { transform: scale(0.9); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.animate-mood-bounce {
+  animation: mood-bounce 0.4s ease-out;
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Slide up */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Shimmer on XP bar */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}

@@ -5,6 +5,9 @@ import { GoalList } from "@/components/goals/GoalList";
 import { MoodSelector } from "@/components/mood/MoodSelector";
 import { MoodChart } from "@/components/mood/MoodChart";
 import { StreakCounter } from "@/components/dashboard/StreakCounter";
+import { Greeting } from "@/components/dashboard/Greeting";
+import { XpToastContainer } from "@/components/ui/XpToast";
+import { ConfettiCanvas } from "@/components/ui/Confetti";
 import type { Profile, Goal, GoalCompletion, MoodEntry } from "@/lib/types";
 
 export default async function DashboardPage() {
@@ -57,43 +60,57 @@ export default async function DashboardPage() {
   const completedGoalIds = new Set(completions.map((c) => c.goal_id));
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left column: Plant + Streak */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-            <PlantDisplay
-              stage={profile.plant_stage}
-              totalXp={profile.total_xp}
+    <>
+      <XpToastContainer />
+      <ConfettiCanvas />
+
+      <div className="space-y-8">
+        {/* Greeting */}
+        <Greeting
+          displayName={profile.display_name}
+          currentStreak={profile.current_streak}
+          completedToday={completions.length}
+          totalGoals={goals.length}
+          plantStage={profile.plant_stage}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left column: Plant + Streak */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-shadow duration-300">
+              <PlantDisplay
+                stage={profile.plant_stage}
+                totalXp={profile.total_xp}
+              />
+            </div>
+            <StreakCounter
+              currentStreak={profile.current_streak}
+              longestStreak={profile.longest_streak}
             />
           </div>
-          <StreakCounter
-            currentStreak={profile.current_streak}
-            longestStreak={profile.longest_streak}
-          />
+
+          {/* Right column: Goals */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-shadow duration-300">
+            <GoalList
+              goals={goals}
+              completedGoalIds={completedGoalIds}
+              today={today}
+            />
+          </div>
         </div>
 
-        {/* Right column: Goals */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-          <GoalList
-            goals={goals}
-            completedGoalIds={completedGoalIds}
-            today={today}
-          />
+        {/* Mood section */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-shadow duration-300">
+          <MoodSelector todayMood={todayMood} />
         </div>
+
+        {/* Mood history chart */}
+        {moodHistory.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-shadow duration-300">
+            <MoodChart entries={moodHistory} />
+          </div>
+        )}
       </div>
-
-      {/* Mood section */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-        <MoodSelector todayMood={todayMood} />
-      </div>
-
-      {/* Mood history chart */}
-      {moodHistory.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-          <MoodChart entries={moodHistory} />
-        </div>
-      )}
-    </div>
+    </>
   );
 }

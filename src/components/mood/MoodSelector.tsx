@@ -15,6 +15,7 @@ export function MoodSelector({ todayMood }: MoodSelectorProps) {
   const [note, setNote] = useState(todayMood?.note ?? "");
   const [saved, setSaved] = useState(!!todayMood);
   const [isPending, startTransition] = useTransition();
+  const [justSaved, setJustSaved] = useState(false);
 
   function handleSave() {
     if (!selectedMood) return;
@@ -22,16 +23,18 @@ export function MoodSelector({ todayMood }: MoodSelectorProps) {
     startTransition(async () => {
       await submitMood(selectedMood, note.trim() || null);
       setSaved(true);
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2000);
     });
   }
 
-  const moodColors = [
+  const moodStyles = [
     "",
-    "hover:bg-red-50 data-[selected=true]:bg-red-50 data-[selected=true]:ring-2 data-[selected=true]:ring-red-300",
-    "hover:bg-orange-50 data-[selected=true]:bg-orange-50 data-[selected=true]:ring-2 data-[selected=true]:ring-orange-300",
-    "hover:bg-yellow-50 data-[selected=true]:bg-yellow-50 data-[selected=true]:ring-2 data-[selected=true]:ring-yellow-300",
-    "hover:bg-emerald-50 data-[selected=true]:bg-emerald-50 data-[selected=true]:ring-2 data-[selected=true]:ring-emerald-300",
-    "hover:bg-green-50 data-[selected=true]:bg-green-50 data-[selected=true]:ring-2 data-[selected=true]:ring-green-300",
+    "hover:bg-red-50 hover:scale-110 data-[selected=true]:bg-red-50 data-[selected=true]:ring-2 data-[selected=true]:ring-red-300 data-[selected=true]:scale-110",
+    "hover:bg-orange-50 hover:scale-110 data-[selected=true]:bg-orange-50 data-[selected=true]:ring-2 data-[selected=true]:ring-orange-300 data-[selected=true]:scale-110",
+    "hover:bg-yellow-50 hover:scale-110 data-[selected=true]:bg-yellow-50 data-[selected=true]:ring-2 data-[selected=true]:ring-yellow-300 data-[selected=true]:scale-110",
+    "hover:bg-emerald-50 hover:scale-110 data-[selected=true]:bg-emerald-50 data-[selected=true]:ring-2 data-[selected=true]:ring-emerald-300 data-[selected=true]:scale-110",
+    "hover:bg-green-50 hover:scale-110 data-[selected=true]:bg-green-50 data-[selected=true]:ring-2 data-[selected=true]:ring-green-300 data-[selected=true]:scale-110",
   ];
 
   return (
@@ -40,7 +43,7 @@ export function MoodSelector({ todayMood }: MoodSelectorProps) {
         {saved ? "Today's mood" : "How are you feeling today?"}
       </h2>
 
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-2 sm:gap-3 mb-4">
         {[1, 2, 3, 4, 5].map((mood) => (
           <button
             key={mood}
@@ -49,9 +52,15 @@ export function MoodSelector({ todayMood }: MoodSelectorProps) {
               setSelectedMood(mood);
               setSaved(false);
             }}
-            className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl transition-all ${moodColors[mood]}`}
+            className={`flex flex-col items-center gap-1 px-3 sm:px-4 py-3 rounded-xl transition-all duration-200 active:scale-95 ${moodStyles[mood]}`}
           >
-            <span className="text-2xl">{MOOD_EMOJIS[mood]}</span>
+            <span
+              className={`text-2xl sm:text-3xl transition-transform duration-200 ${
+                selectedMood === mood ? "animate-mood-bounce" : ""
+              }`}
+            >
+              {MOOD_EMOJIS[mood]}
+            </span>
             <span className="text-xs text-[#95A5A6] font-medium">
               {MOOD_LABELS[mood]}
             </span>
@@ -60,31 +69,35 @@ export function MoodSelector({ todayMood }: MoodSelectorProps) {
       </div>
 
       {selectedMood && !saved && (
-        <div className="flex gap-3 items-end">
+        <div className="flex gap-3 items-end animate-slide-up">
           <input
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Add a note (optional)"
+            onKeyDown={(e) => e.key === "Enter" && handleSave()}
+            placeholder="Add a note (optional) — press Enter to save"
             className="flex-1 px-4 py-2.5 rounded-lg border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#4A7C59]/30 focus:border-[#4A7C59] transition-colors text-sm"
           />
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="px-6 py-2.5 rounded-lg bg-[#4A7C59] text-white text-sm font-medium hover:bg-[#3a6347] transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-lg bg-[#4A7C59] text-white text-sm font-medium hover:bg-[#3a6347] active:scale-95 transition-all disabled:opacity-50"
           >
             {isPending ? "Saving..." : "Save"}
           </button>
         </div>
       )}
 
-      {saved && todayMood?.note && (
-        <p className="text-sm text-[#95A5A6] italic">
-          &ldquo;{todayMood.note}&rdquo;
+      {justSaved && (
+        <p className="text-sm text-[#4A7C59] font-medium mt-2 animate-fade-in">
+          Mood saved!
         </p>
       )}
-      {saved && note && !todayMood?.note && (
-        <p className="text-sm text-[#95A5A6] italic">&ldquo;{note}&rdquo;</p>
+
+      {saved && !justSaved && (note || todayMood?.note) && (
+        <p className="text-sm text-[#95A5A6] italic mt-2">
+          &ldquo;{note || todayMood?.note}&rdquo;
+        </p>
       )}
     </div>
   );
